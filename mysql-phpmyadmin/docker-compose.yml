@@ -1,0 +1,37 @@
+version: '3.8'
+
+networks:
+  mysql:
+    external: true
+  databases:
+    external: true
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    volumes:
+      - /var/lib/docker/volumes/mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_USER=newrootuser
+      - MYSQL_ROOT_PASSWORD='${MYSQL_DB_PASSWORD}'
+      - MYSQL_DATABASE=mydatabase
+      - MYSQL_USER='${MYSQL_DB_USER}'
+      - MYSQL_PASSWORD='${MYSQL_DB_PASSWORD}'
+    ports:
+      - 3306:3306
+    restart: unless-stopped
+    networks:
+      - mysql
+      - databases
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: mysql_admin
+    ports:
+      - 8080:8082
+    environment:
+      - PMA_PORT=3306
+    restart: unless-stopped
+    networks:
+      - mysql
